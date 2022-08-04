@@ -1,58 +1,118 @@
 <template>
-  <div class="hello">
-    <h1>{{ msg }}</h1>
-    <p>
-      For a guide and recipes on how to configure / customize this project,<br>
-      check out the
-      <a href="https://cli.vuejs.org" target="_blank" rel="noopener">vue-cli documentation</a>.
-    </p>
-    <h3>Installed CLI Plugins</h3>
-    <ul>
-      <li><a href="https://github.com/vuejs/vue-cli/tree/dev/packages/%40vue/cli-plugin-babel" target="_blank" rel="noopener">babel</a></li>
-      <li><a href="https://github.com/vuejs/vue-cli/tree/dev/packages/%40vue/cli-plugin-eslint" target="_blank" rel="noopener">eslint</a></li>
-    </ul>
-    <h3>Essential Links</h3>
-    <ul>
-      <li><a href="https://vuejs.org" target="_blank" rel="noopener">Core Docs</a></li>
-      <li><a href="https://forum.vuejs.org" target="_blank" rel="noopener">Forum</a></li>
-      <li><a href="https://chat.vuejs.org" target="_blank" rel="noopener">Community Chat</a></li>
-      <li><a href="https://twitter.com/vuejs" target="_blank" rel="noopener">Twitter</a></li>
-      <li><a href="https://news.vuejs.org" target="_blank" rel="noopener">News</a></li>
-    </ul>
-    <h3>Ecosystem</h3>
-    <ul>
-      <li><a href="https://router.vuejs.org" target="_blank" rel="noopener">vue-router</a></li>
-      <li><a href="https://vuex.vuejs.org" target="_blank" rel="noopener">vuex</a></li>
-      <li><a href="https://github.com/vuejs/vue-devtools#vue-devtools" target="_blank" rel="noopener">vue-devtools</a></li>
-      <li><a href="https://vue-loader.vuejs.org" target="_blank" rel="noopener">vue-loader</a></li>
-      <li><a href="https://github.com/vuejs/awesome-vue" target="_blank" rel="noopener">awesome-vue</a></li>
-    </ul>
+  <div id="background-terminal">
+    <div id="wrapper">
+      <vue-terminal
+        title="console"
+        defaultTaskCommandd="init console"
+        :task-list="taskList"
+        :command-list="commandList"
+        :showHeader=false
+        :unknownCommandMessage=unknownCommandMessage
+        :autoFucos=true
+      />
+    </div>
   </div>
 </template>
 
 <script>
-export default {
-  name: 'HelloWorld',
-  props: {
-    msg: String
+  import VueTerminal from 'vue-terminal';
+  let helloBanner = `
+,--.  ,--.  ,--. 
+|  '--'  |  |  | 
+|  .--.  |  |  | 
+|  |  |  |  |  | 
+\`--'  \`--ˊ  \`--ˊ 
+`;
+  
+  export default {
+    components: { VueTerminal },
+    data: () => ({
+      unknownCommandMessage: {
+        time: "",
+        type: 'error',
+        label: 'Error',
+        message: "This command haven't been developed!"
+      },
+
+      commandList: {
+        hello: {
+          description: "say hi",
+          messages: [
+            {
+              message: helloBanner,
+            }
+          ]
+        },
+        version: {
+          description: "show version info",
+          messages: [
+            {
+              message: ".2.0 - August 4th only",
+            }
+          ]
+        },
+        findBrain: {
+          description: "find out where your brain is.",
+          messages: [
+            {
+              type: "error",
+              label: "Error",
+              message: "Missing! Couldn't find your brain:)"
+            }
+          ]
+        }
+      },
+
+      taskList: {
+        cowsay: {
+          description: "let cow say something:))\n\t\t\t e.g., cowsay hello",
+          cowsay(pushToList, input) {
+            if(input.length <= 7) {
+              input = "cowsay What else can I say?"
+            }
+            let talk = input.substr(6, input.length - 1);
+            let upper = "_";
+            let lower = "-";
+            let length = input.length - 5;
+            for(let i = 0; i < length; ++i) {
+              upper = upper.concat("_");
+              lower = lower.concat("-")
+            }
+            const p = new Promise(resolve => {
+              pushToList({ time: "", label: 'Cow Say', type: 'success', message: `
+      ${upper}
+      <${talk} >
+      ${lower}
+      \\
+       \\    ^__^
+        \\   (oo)\\_______
+            (__)\\       )\\/\\
+                ||----w |
+                ||     ||
+              ` });
+              resolve({ type: 'success', label: '', message: '' })
+            })
+            return p
+          }
+        }
+      },
+      
+    }),
+    computed: {
+      
+    }
   }
-}
 </script>
 
-<!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
-h3 {
-  margin: 40px 0 0;
+#background-terminal {
+  background: #010924;
+  width: 100vw;
+  height: 100vh;
+  margin: 0px;
 }
-ul {
-  list-style-type: none;
-  padding: 0;
-}
-li {
-  display: inline-block;
-  margin: 0 10px;
-}
-a {
-  color: #42b983;
+
+.vue-terminal {
+  margin-bottom: 0px !important;
 }
 </style>
